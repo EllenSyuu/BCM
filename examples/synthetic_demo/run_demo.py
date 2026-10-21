@@ -9,8 +9,8 @@ What it does
    ``assemble_model_input.py`` (``model_input_SYNTH.npz`` + index JSON).
 3. Runs the real fitting entry point, ``src/python/run_full_model.py``, with
    durable checkpoints (``--checkpoint-every 80`` by default).
-4. Compares the posterior estimates with the known truth and writes a short
-   report.
+4. Compares the posterior estimates with the known truth, writes a short
+   report and draws the recovery figure (``synthetic_recovery.svg``).
 
 No restricted, licensed or real data is read or produced. Every file is written
 under ``--output-dir`` (default ``examples/synthetic_demo/output/``, git-ignored),
@@ -213,7 +213,7 @@ def main(argv: list[str] | None = None) -> dict:
     ap.add_argument("--quick", action="store_true", help="smaller sampler settings (used by the test suite)")
     args = ap.parse_args(argv)
 
-    settings = QUICK if args.quick else FULL
+    settings = dict(QUICK if args.quick else FULL, seed=args.seed)
     output_dir = args.output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     checkpoints = output_dir / "A.2. Processed" / "model_output" / TAG / "checkpoints"
@@ -225,7 +225,12 @@ def main(argv: list[str] | None = None) -> dict:
     truth = write_inputs(output_dir, args.seed)
     runtime = run_model(output_dir, settings, args.seed)
     summary = summarise(output_dir, truth, runtime, settings)
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from plot_recovery import plot_recovery  # noqa: E402
+
+    figure = plot_recovery(output_dir)
     print((output_dir / "demo_report.md").read_text())
+    print(f"Recovery figure: {figure}")
     print(f"Outputs written under: {output_dir}")
     return summary
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+from xml.etree import ElementTree
 from pathlib import Path
 
 import pandas as pd
@@ -37,3 +38,9 @@ def test_quick_demo_runs_end_to_end(tmp_path):
     assert summary["mean_absolute_error_percentage_points"] < 3.0
     assert (tmp_path / "demo_report.md").is_file()
     assert (tmp_path / "demo_summary.json").is_file()
+
+    # the recovery figure is drawn from the same outputs and states its limits
+    svg = ElementTree.parse(tmp_path / "synthetic_recovery.svg").getroot()
+    text = " ".join(t for t in svg.itertext())
+    assert f"{summary['coverage_of_true_rate_by_90pct_interval']:.1%}" in text
+    assert "not a formal or empirical result" in text

@@ -8,5 +8,6 @@
 | [`data-sources.md`](data-sources.md) | Source roles, access limits, compatibility and local configuration. |
 | [`performance.md`](performance.md) | Execution optimisations and what they preserve. |
 | [`reproducibility.md`](reproducibility.md) | Environment, lockfile, determinism and release checklist. |
+| [`visualization-plan.md`](visualization-plan.md) | Planned figures, their inputs and priorities, and the paper-comparison design. |
 
 Restricted inputs and any working notes about them are kept outside this repository.

@@ -20,6 +20,7 @@ Nothing below has been compared with the published results. "Verified" means ver
 |---|---|---|
 | Synthetic end-to-end run (simulate → `run_full_model.py` with checkpoints → estimates) | **verified** on synthetic data | `tests/test_synthetic_demo.py`; CI also runs the README demo |
 | Checkpointed sampling, resume after interruption, single compiled run | **verified** on synthetic data, CPU, one chain | `tests/test_checkpointing.py`: chunked, resumed and single-run draws are bit-identical for the same seed |
+| Synthetic recovery figure (`plot_recovery.py`) | **verified** on synthetic data | `tests/test_synthetic_demo.py` checks the SVG and its reported coverage |
 | Data-root configuration (`BCM_DATA_DIR`) | **verified** | `tests/test_paths.py` |
 | Spline bases and entry-year indexing | **verified** (unit level) | `tests/test_public_synthetic.py` |
 | NumPyro model has a finite joint density on synthetic inputs | **verified** (unit level) | `tests/test_public_synthetic.py` |
