@@ -5,14 +5,64 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "bcm-reproduction"
 version = "0.1.0"
-description = "Public-safe Bayesian cohort model reproduction for SDG 4.1.4"
+description = "Independent reproduction of a Bayesian cohort model for SDG 4.1.4 out-of-school rates"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = {text = "MIT"}
+authors = [{name = "Ellen Syuu"}]
+
+# Single source of truth for dependencies. Exact, tested versions are pinned in
+# requirements.lock (see docs/reproducibility.md for how it is generated).
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pandas>=2.1",
+    "jax>=0.4.30",
+    # The checkpointed sampler wraps numpyro.util.tqdm_auto (not a public API);
+    # cap the major line until that wrapper is replaced.
+    "numpyro>=0.15,<0.23",
+]
+
+[project.optional-dependencies]
+# Public-data acquisition and survey harmonisation (WPP/Eurostat/SingStat, MICS SPSS files)
+data = [
+    "requests>=2.31",
+    "openpyxl>=3.1",
+    "eurostat>=1.1",
+    "pyreadstat>=1.2",
+]
+# Equation-level Stan reference; needs a C++ toolchain via CmdStan
+stan = ["cmdstanpy>=1.2"]
+dev = [
+    "pytest>=8",
+    "ruff>=0.5",
+]
+
+[tool.setuptools]
+# Flat modules under src/python become importable after `pip install -e .`
+package-dir = {"" = "src/python"}
+py-modules = [
+    "assemble_model_input",
+    "bcm_paths",
+    "build_population",
+    "download_dhs",
+    "fetch_public_data",
+    "harmonize_admin_data",
+    "harmonize_dhs",
+    "harmonize_ipums_census",
+    "harmonize_mics",
+    "harmonize_wide",
+    "holdout_validation",
+    "oosc_model_numpyro",
+    "refit_countries",
+    "reweight_wide",
+    "run_full_model",
+    "spline_basis",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 
 [tool.ruff]
-line-length = 100
+line-length = 120
