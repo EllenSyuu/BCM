@@ -9,7 +9,7 @@ description = "Independent reproduction of a Bayesian cohort model for SDG 4.1.4
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
-authors = [{name = "Ellen Syuu"}]
+authors = [{name = "Ziyi Zhou"}]
 
 # Single source of truth for dependencies. Exact, tested versions are pinned in
 # requirements.lock (see docs/reproducibility.md for how it is generated).

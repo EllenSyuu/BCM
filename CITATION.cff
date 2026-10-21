@@ -3,8 +3,8 @@ title: "Bayesian Cohort Model Reproduction: SDG 4.1.4 Out-of-School Rates"
 message: "If you use this repository, please cite it and the underlying published methodology."
 type: software
 authors:
-  - family-names: Syuu
-    given-names: Ellen
+  - family-names: Zhou
+    given-names: Ziyi
 repository-code: "https://github.com/EllenSyuu/BCM"
 license: MIT
 keywords:
