@@ -5,7 +5,7 @@
 //
 // Run separately per sex population (male / female / total), per the paper (Section 3.4).
 //
-// Indexing conventions (see README / docs/model_notes.md for full rationale):
+// Indexing conventions (see docs/model-notes.md for the rationale):
 //  - age index a = 1 is the country's minimum school-entry age; a runs 1..A_max.
 //  - "entry year" (ey) = calendar year y minus (age - 1); both mu and Theta are
 //    evaluated on a shared entry-year grid of size N_EY, wide enough to cover the
@@ -39,7 +39,7 @@ data {
 
   // --- survey observations (Eq. 2) ---
   int<lower=0> N_S;
-  array[N_S] real K_obs;                             // probit(S_j), precomputed in R
+  array[N_S] real K_obs;                             // probit(S_j), precomputed in Python (assemble_model_input.py)
   array[N_S] real<lower=0> f_obs;                    // std-normal pdf at K_obs (Delta method)
   array[N_S] real<lower=0> nu;                       // sampling SE, real space, clustered Jackknife
   array[N_S] int<lower=1, upper=C> S_country;
