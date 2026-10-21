@@ -59,92 +59,75 @@ Requires Python 3.11 or newer. Tested in CI on Python 3.11 and 3.13 (Linux, CPU)
 
 ## How it works
 
-The diagrams describe the code as it is today; dashed boxes are planned and not implemented.
-
-**Pipeline and the data boundary.** Everything left of the boundary is public and runs in this repository; restricted inputs enter only through a private adapter that writes files in the model's input format.
-
 ```mermaid
 flowchart LR
-  subgraph PUBLIC["Public repository: public or synthetic data"]
+  subgraph PUB["Public · versioned in Git"]
     direction TB
-    P1["Public sources<br/>WPP, Eurostat, SingStat"] --> P2["fetch_public_data.py<br/>build_population.py"]
-    P3["Licensed survey microdata<br/>DHS, MICS, IPUMS (local copies)"] --> P4["harmonize_*.py"]
-    S1["Synthetic simulator<br/>examples/synthetic_demo"]
+    SRC["Public-data fetchers<br/>(population)"]
+    LIC["Survey harmonisers<br/>(licensed microdata stays local)"]
+    CI["Tests and CI"]
   end
-  subgraph PRIVATE["Private environment: restricted data, never committed"]
+  subgraph SYN["Synthetic demo · git-ignored output"]
+    SIM["Synthetic simulator"]
+  end
+  subgraph PRIV["Private · never committed"]
     direction TB
-    R1["Restricted administrative<br/>enrolment and reference tables"] --> R2["Private adapter"]
+    ADM["Restricted administrative inputs"] --> ADP["Private adapter"]
+    ADP --> ROOT[("BCM_DATA_DIR")]
   end
-  P2 --> C["Observation files<br/>(documented contract: planned)"]
-  P4 --> C
-  R2 --> C
-  C --> M["assemble_model_input.py<br/>model_input_*.npz + index"]
-  S1 --> M
-  M --> F["run_full_model.py<br/>NumPyro NUTS"]
-  M -. "reference" .-> STAN["oosc_cohort_model.stan"]
-  F --> O["estimates.csv, diagnostics.csv,<br/>parameters.csv, run_info.json"]
-  O --> V["Reporting and figures"]
+  subgraph CON["Data contract"]
+    direction TB
+    OBS["Observation files"]
+    VAL["Schema validation"]
+  end
+  SRC --> OBS
+  LIC --> OBS
+  ROOT --> OBS
+  OBS -.-> VAL
+  OBS --> MI["Model input"]
+  SIM --> MI
+  CI --> SIM
+  MI --> INF["NumPyro NUTS inference<br/>(Stan reference model)"]
+  INF --> POST["Posterior summaries<br/>and diagnostics"]
+  POST --> REP["Reporting and figures"]
+  POST -.-> AGG["Education-level and<br/>regional aggregation"]
+
+  subgraph KEY["Legend"]
+    direction LR
+    K1["Public · in Git"]
+    K2["Synthetic · git-ignored"]
+    K3["Private · never committed"]
+    K4["Planned · not implemented"]
+    K1 ~~~ K2 ~~~ K3 ~~~ K4
+  end
+
+  classDef pub fill:#e8f1fc,stroke:#2a78d6,color:#0b0b0b
+  classDef syn fill:#e3f5ee,stroke:#1baf7a,color:#0b0b0b
+  classDef priv fill:#fbece6,stroke:#eb6834,color:#0b0b0b
+  classDef plan fill:#ffffff,stroke:#8a8984,stroke-dasharray:5 3,color:#52514e
+  class SRC,LIC,CI,OBS,MI,INF,POST,REP,K1 pub
+  class SIM,K2 syn
+  class ADM,ADP,ROOT,K3 priv
+  class VAL,AGG,K4 plan
+  style PUB fill:#fafaf8,stroke:#2a78d6
+  style SYN fill:#fafaf8,stroke:#1baf7a
+  style PRIV fill:#fafaf8,stroke:#eb6834
+  style CON fill:#fafaf8,stroke:#52514e
+  style KEY fill:#ffffff,stroke:#d6d5d0
 ```
 
-**What is written where.** All local inputs and outputs sit under one data root (`BCM_DATA_DIR`, or the git-ignored `data/`); only code, docs, tests and the synthetic figure are versioned.
+Only code, documentation, tests and synthetic examples are versioned. Restricted administrative inputs stay in a private environment: a private adapter turns them into observation files under `BCM_DATA_DIR`, and from that point the public pipeline treats them like any other input. Dashed boxes and arrows are planned work, not implemented features.
 
-```mermaid
-flowchart TB
-  subgraph GIT["Versioned in git"]
-    code["src/, tests/, docs/, examples/ code"]
-    fig["docs/assets/synthetic_recovery.svg<br/>(synthetic only)"]
-  end
-  subgraph ROOT["Data root: BCM_DATA_DIR or data/ (git-ignored)"]
-    raw["A.1. Raw Sources<br/>public downloads, licensed copies"]
-    proc["A.2. Processed<br/>observations, model_input, model_output"]
-  end
-  subgraph DEMO["examples/synthetic_demo/output (git-ignored)"]
-    syn["simulated inputs, fits, report, figure"]
-  end
-  subgraph PRIV["Private location outside the repository"]
-    restr["restricted inputs and reference tables"]
-  end
-  restr -- "read via environment variables" --> proc
-  raw --> proc
-  code --> proc
-  code --> syn
-  syn -- "regenerate and copy" --> fig
-```
+The statistical model (cohort baseline with drift, cohort-specific age effects, administrative and survey likelihoods) is described step by step in [docs/model-workflow.md](docs/model-workflow.md), with the equation-level notes in [docs/model-notes.md](docs/model-notes.md).
 
-**Model workflow.** The probit-scale rate for country *c*, year *y* and relative age *a* is a cohort baseline evaluated at the entry year plus an age-specific cohort change (see [docs/model-notes.md](docs/model-notes.md)).
+**Checkpointing.** `run_full_model.py` can sample in one pass or in resumable chunks:
 
-```mermaid
-flowchart TB
-  A["Observations by country, year, single age, sex"] --> B["Relative age a = age - entry age + 1<br/>entry year = year - a + 1"]
-  B --> C["Spline bases on the entry-year grid<br/>B1 annual knots, B5 five-year knots"]
-  C --> D["Baseline mu: random walk with drift,<br/>anchored at 2000, regional drift scales"]
-  C --> E["Cohort change Theta: alpha surface<br/>with 2-D smoothing penalties"]
-  D --> K["Latent probit rate kappa"]
-  E --> K
-  K --> L1["Administrative likelihood<br/>real space: Phi(kappa) + noise"]
-  K --> L2["Survey likelihood<br/>probit space: kappa + series bias + noise"]
-  L1 --> P["NUTS posterior"]
-  L2 --> P
-  P --> Q["Single-age rates: median and 90% interval"]
-  Q -.-> AGG["Education-level rates, out-of-school<br/>populations, regional and global totals<br/>(not implemented)"]
-```
+| Option | Behaviour |
+|---|---|
+| `--checkpoint-every 0` | One compiled run; draws are saved at the end. |
+| `--checkpoint-every N` (default 80) | Samples in chunks of N iterations, saving each chunk and the sampler state before updating `checkpoint.json`; an interrupted run resumes from the last saved chunk. |
 
-**Checkpointing and resumption.** With checkpoints on, sampling runs in chunks; each chunk is saved before the manifest advances, so an interrupted run resumes from the last saved state and produces the same draws as an uninterrupted run (tested in `tests/test_checkpointing.py`).
-
-```mermaid
-flowchart TB
-  start(["run_full_model.py"]) --> m{"checkpoint.json<br/>exists?"}
-  m -- "no" --> w["Warm-up, save state_000000.pkl"]
-  m -- "yes, same settings" --> r["Load last state from manifest"]
-  m -- "yes, different settings" --> x["Stop with an error"]
-  w --> c["Sample next chunk<br/>(--checkpoint-every iterations)"]
-  r --> c
-  c --> s["Save samples_N.npz and state_N.pkl,<br/>then update manifest"]
-  s --> d{"all draws done?"}
-  d -- "no" --> c
-  d -- "yes" --> f["posterior_draws.npz,<br/>status sampling_complete"]
-  start -. "--checkpoint-every 0" .-> one["Single compiled run<br/>(identical draws)"] --> f
-```
+With the same seed, both options return bit-identical draws (tested on CPU with one chain in `tests/test_checkpointing.py`). The resumption flow is described in [docs/model-workflow.md](docs/model-workflow.md#checkpointing-and-resumption).
 
 ## Running the pipeline on local data
 
@@ -172,7 +155,7 @@ Pipeline order for an authorised local run (see [docs/architecture.md](docs/arch
     tests/                   Automated tests (synthetic inputs only)
     docs/                    Status, architecture, model notes, data sources, performance, reproducibility
 
-Start with [docs/status.md](docs/status.md), then [docs/model-notes.md](docs/model-notes.md) and [docs/architecture.md](docs/architecture.md). The data and publication boundary is described in [PUBLICATION_NOTES.md](PUBLICATION_NOTES.md).
+Start with [docs/status.md](docs/status.md), then [docs/model-notes.md](docs/model-notes.md) and [docs/architecture.md](docs/architecture.md). The data and publication boundary is described in [PUBLICATION_NOTES.md](PUBLICATION_NOTES.md), and how to report security or data-exposure problems in [SECURITY.md](SECURITY.md).
 
 ## Citation
 
