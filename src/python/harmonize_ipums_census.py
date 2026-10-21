@@ -21,9 +21,9 @@ Choices the paper leaves open (documented, change here if needed):
 - Ages 5-19 in calendar age; conversion to relative age (a = 1 at the
   country's minimum entry age) happens at model-input assembly, same as admin.
 
-Input : A. Data/A.1. Raw Sources/3. Survey Data/3. IPUMS International (v7.3 census)/ipumsi_00003.csv.gz
-Output: A. Data/A.2. Processed/ipums_census_oosc_observations.csv
-        A. Data/A.2. Processed/ipums_sample_inventory.csv
+Input : <data root>/A.1. Raw Sources/3. Survey Data/3. IPUMS International (v7.3 census)/ipumsi_00003.csv.gz
+Output: <data root>/A.2. Processed/ipums_census_oosc_observations.csv
+        <data root>/A.2. Processed/ipums_sample_inventory.csv
 """
 from __future__ import annotations
 
@@ -34,8 +34,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[3]
-DATA = ROOT / "A. Data"
+from bcm_paths import data_root  # noqa: E402
+
+DATA = data_root()
 RAW = DATA / "A.1. Raw Sources" / "3. Survey Data" / "3. IPUMS International (v7.3 census)" / "ipumsi_00003.csv.gz"
 # Country/region reference tables are restricted local inputs. Their location is
 # supplied through environment variables (see docs/data-sources.md); they are never

@@ -22,8 +22,10 @@ import time
 import urllib.request
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
-DEST = ROOT / "A. Data" / "A.1. Raw Sources" / "3. Survey Data" / "2. DHS (2000-2018, pending project approval)"
+from bcm_paths import data_root  # noqa: E402
+
+DATA = data_root()
+DEST = DATA / "A.1. Raw Sources" / "3. Survey Data" / "2. DHS (2000-2018, pending project approval)"
 URL_LIST = Path.home() / "Downloads" / "dhs_PR_2000_2018_urls.txt"
 COOKIE = next((p for p in (Path.home() / ".dhs_cookie.txt", Path.home() / "Downloads" / ".dhs_cookie.txt")
                if p.exists()), Path.home() / ".dhs_cookie.txt")

@@ -25,6 +25,21 @@ The paper uses multiple survey and census families. Their use is conditional on 
 
 The paper's central administrative component requires raw enrolment counts by country, year, single age, sex, and education level, before publication-side cleaning that would remove or cap invalid observations. Those inputs are not included here. The public project therefore claims a reproducible method and pipeline, not a complete public-data reproduction of the administrative likelihood.
 
+## Local configuration
+
+All inputs and outputs live under one data root: `BCM_DATA_DIR` if set (an absolute path), otherwise the git-ignored `<repository>/data`. Paths are resolved in `src/python/bcm_paths.py`.
+
+Real-data runs also need country and regional reference tables, which are restricted local inputs. Their location is set with environment variables (see `.env.example`):
+
+| Variable | Default |
+|---|---|
+| `BCM_ADMIN_REFERENCE_DIR` | `<data root>/restricted/admin_reference` |
+| `BCM_COUNTRY_CODE_MAPPING` | `<admin reference dir>/country_code_mapping.csv` |
+| `BCM_GROUP_DEFINITIONS` | `<admin reference dir>/group_definitions.csv` |
+| `BCM_GROUP_MEMBERSHIP` | `<admin reference dir>/group_membership.csv` |
+
+The synthetic demo and the tests need none of these.
+
 ## Compatibility checklist
 
 Before admitting a source to the model, document whether it has single-age or education-level support; whether sex, country, and year definitions match; whether numerator and denominator are compatible; whether weights, clusters, and uncertainty are available; whether the source vintage matches the paper; and whether the licence permits the intended use.

@@ -17,9 +17,9 @@ Choices the paper leaves open (documented, change here if needed):
 - Cells with a rate of exactly 0 or 1 are dropped (probit undefined in Eq. 2),
   same rule as the IPUMS script.
 
-Input : A. Data/A.1. Raw Sources/3. Survey Data/2. DHS (...)/??PR*FL.zip
-Output: A. Data/A.2. Processed/dhs_oosc_observations.csv
-        A. Data/A.2. Processed/dhs_file_inventory.csv
+Input : <data root>/A.1. Raw Sources/3. Survey Data/2. DHS (...)/??PR*FL.zip
+Output: <data root>/A.2. Processed/dhs_oosc_observations.csv
+        <data root>/A.2. Processed/dhs_file_inventory.csv
 """
 from __future__ import annotations
 
@@ -37,8 +37,9 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).parent))
 from harmonize_ipums_census import AGE_MAX, AGE_MIN, jackknife_ratio  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[3]
-DATA = ROOT / "A. Data"
+from bcm_paths import data_root  # noqa: E402
+
+DATA = data_root()
 RAW = DATA / "A.1. Raw Sources" / "3. Survey Data" / "2. DHS (2000-2018, pending project approval)"
 META = RAW / "dhs_survey_metadata.csv"  # file -> country/year, built once from the API
 URL_LIST = Path.home() / "Downloads" / "dhs_PR_2000_2018_urls.txt"

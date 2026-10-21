@@ -49,8 +49,10 @@ from numpyro.distributions import constraints  # noqa: E402
 from numpyro.infer import MCMC, NUTS  # noqa: E402
 
 numpyro.set_host_device_count(args.chains)
-ROOT = Path(__file__).resolve().parents[3]
-PROC = ROOT / "A. Data" / "A.2. Processed"
+from bcm_paths import data_root  # noqa: E402
+
+DATA = data_root()
+PROC = DATA / "A.2. Processed"
 OUT = PROC / "model_output" / "MF"
 
 

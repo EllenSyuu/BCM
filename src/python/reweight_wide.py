@@ -36,9 +36,11 @@ import pandas as pd
 from scipy.special import logsumexp, ndtr, ndtri
 from scipy.stats import norm
 
-ROOT = Path(__file__).resolve().parents[3]
-PROC = ROOT / "A. Data" / "A.2. Processed"
-STRUCT = (ROOT / "A. Data" / "A.1. Raw Sources" / "2. Administrative Data" / "2. UIS API - School System Structure"
+from bcm_paths import data_root  # noqa: E402
+
+DATA = data_root()
+PROC = DATA / "A.2. Processed"
+STRUCT = (DATA / "A.1. Raw Sources" / "2. Administrative Data" / "2. UIS API - School System Structure"
           / "uis_entry_age_duration_2000_2022.csv")
 OUT = PROC / "model_output" / "MF"
 

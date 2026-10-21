@@ -22,8 +22,8 @@ Choices (documented, change here if needed):
 - Papua New Guinea (HIES) and Colombia (ECV) are unavailable -- see
   docs/data-sources.md.
 
-Input : A. Data/A.1. Raw Sources/3. Survey Data/4. WIDE/<country>/wide_*.csv
-Output: A. Data/A.2. Processed/wide_oosc_observations.csv
+Input : <data root>/A.1. Raw Sources/3. Survey Data/4. WIDE/<country>/wide_*.csv
+Output: <data root>/A.2. Processed/wide_oosc_observations.csv
 """
 from __future__ import annotations
 
@@ -32,8 +32,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[3]
-DATA = ROOT / "A. Data"
+from bcm_paths import data_root  # noqa: E402
+
+DATA = data_root()
 RAW = DATA / "A.1. Raw Sources" / "3. Survey Data" / "4. WIDE"
 OUT = DATA / "A.2. Processed" / "wide_oosc_observations.csv"
 

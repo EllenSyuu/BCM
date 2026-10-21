@@ -7,9 +7,8 @@ acquisition -- run this before arranging DHS/MICS/IPUMS access or the
 authorised administrative-data input (see docs/data-sources.md).
 
 Output: single-age population counts by country/year/sex, written under
-A. Data/A.1. Raw Sources/1. Population Denominators/{1. WPP.../2. Eurostat.../3. SingStat...}/
-
-Run from the project root (paths below are relative to it, not to this file).
+<data root>/A.1. Raw Sources/1. Population Denominators/{1. WPP.../2. Eurostat.../3. SingStat...}/
+where the data root is BCM_DATA_DIR (default <repo>/data; see bcm_paths.py).
 """
 from __future__ import annotations
 
@@ -19,7 +18,9 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-POP_DIR = Path("A. Data") / "A.1. Raw Sources" / "1. Population Denominators"
+from bcm_paths import raw_dir  # noqa: E402
+
+POP_DIR = raw_dir() / "1. Population Denominators"
 WPP_DIR = POP_DIR / "1. WPP (2024 revision, 1950-2023 estimates)"
 EUROSTAT_DIR = POP_DIR / "2. Eurostat (1960-2025)"
 SINGSTAT_DIR = POP_DIR / "3. SingStat (1957-2025, 5-year age bands only)"

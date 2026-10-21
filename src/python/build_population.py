@@ -7,7 +7,7 @@ Source per country, as in the paper:
 - SingStat (M810801, residents, end June) for Singapore;
 - WPP (2024 revision, 1 July, by sex) for everything else and as fallback.
 
-Output: A. Data/A.2. Processed/population_single_age_sex.csv
+Output: <data root>/A.2. Processed/population_single_age_sex.csv
         columns iso3, year, age, sex (MF/M/F), population (persons), source
 """
 from __future__ import annotations
@@ -18,8 +18,9 @@ from pathlib import Path
 
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[3]
-DATA = ROOT / "A. Data"
+from bcm_paths import data_root  # noqa: E402
+
+DATA = data_root()
 POP = DATA / "A.1. Raw Sources" / "1. Population Denominators"
 WPP = POP / "1. WPP (2024 revision, 1950-2023 estimates)" / "WPP2024_PopulationBySingleAgeSex_Medium_1950-2023.csv.gz"
 EUROSTAT = POP / "2. Eurostat (1960-2025)" / "eurostat_population.csv"

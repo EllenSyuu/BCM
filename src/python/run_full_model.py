@@ -5,9 +5,12 @@ Paper settings (Section 3.4): 4 chains x 4,000 iterations, first 2,000 burn-in,
 thinned to 1,000 draws in total per population -> --warmup 2000 --samples 2000
 --chains 4 --thinning 8 (the defaults here).
 
-Input : A. Data/A.2. Processed/model_input/model_input_<tag>.npz (+ index json),
+Paths are relative to the data root (BCM_DATA_DIR, default <repo>/data; see
+src/python/bcm_paths.py).
+
+Input : A.2. Processed/model_input/model_input_<tag>.npz (+ index json),
         from assemble_model_input.py
-Output: A. Data/A.2. Processed/model_output/<tag>/
+Output: A.2. Processed/model_output/<tag>/
           progress.txt      live sampling progress, including per-chain bars
           checkpoints/      restartable sampler states and posterior chunks
           posterior_draws.npz all retained posterior draws and divergence flags
@@ -38,12 +41,12 @@ ap.add_argument("--checkpoint-every", type=int, default=80,
                 help="Sampling iterations between durable checkpoints; use 0 for one compiled run.")
 args = ap.parse_args()
 
+sys.path.insert(0, str(Path(__file__).parent))
+from bcm_paths import cache_dir, processed_dir  # noqa: E402
+
 # must be set before JAX starts: one CPU "device" per chain so chains run in parallel
 os.environ.setdefault("XLA_FLAGS", f"--xla_force_host_platform_device_count={args.chains}")
-os.environ.setdefault(
-    "JAX_COMPILATION_CACHE_DIR",
-    str(Path(__file__).resolve().parents[3] / ".jax_compilation_cache"),
-)
+os.environ.setdefault("JAX_COMPILATION_CACHE_DIR", str(cache_dir() / "jax"))
 
 import jax  # noqa: E402
 import numpy as np  # noqa: E402
@@ -51,12 +54,10 @@ import pandas as pd  # noqa: E402
 from numpyro.diagnostics import summary  # noqa: E402
 from scipy.special import ndtr as scipy_ndtr  # noqa: E402
 
-sys.path.insert(0, str(Path(__file__).parent))
 from oosc_model_numpyro import ModelData, run_mcmc_checkpointed  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[3]
-IN_DIR = ROOT / "A. Data" / "A.2. Processed" / "model_input"
-OUT_ROOT = ROOT / "A. Data" / "A.2. Processed" / "model_output"
+IN_DIR = processed_dir() / "model_input"
+OUT_ROOT = processed_dir() / "model_output"
 
 
 def load(tag: str) -> tuple[ModelData, dict]:

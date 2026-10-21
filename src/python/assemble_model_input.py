@@ -13,7 +13,7 @@
   observations and clustered-Jackknife standard errors. Fits are partial
   reproductions until a compatible likelihood is available.
 
-Output: A. Data/A.2. Processed/model_input/model_input_<sex>.npz (arrays for
+Output: <data root>/A.2. Processed/model_input/model_input_<sex>.npz (arrays for
         ModelData) + model_observations_<sex>.csv (one row per observation)
         + model_index_<sex>.json (country/region/series/wave labels, grid)
 """
@@ -32,8 +32,9 @@ from scipy.stats import norm
 sys.path.insert(0, str(Path(__file__).parent))
 from spline_basis import build_model_bases, ey_index, mu_anchor_index  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[3]
-DATA = ROOT / "A. Data"
+from bcm_paths import data_root  # noqa: E402
+
+DATA = data_root()
 PROC = DATA / "A.2. Processed"
 # Country/region reference tables are restricted local inputs. Their location is
 # supplied through environment variables (see docs/data-sources.md); they are never
