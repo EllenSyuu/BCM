@@ -1,28 +1,12 @@
 """Public-safe regression tests using synthetic inputs only.
 
-Run with: python -m unittest discover -s tests -v
+Run with: pytest (tests/conftest.py puts src/python on the import path)
 """
 from __future__ import annotations
 
-import sys
 import unittest
-from pathlib import Path
 
 import numpy as np
-
-
-ROOT = Path(__file__).resolve().parents[1]
-SOURCE_DIRS = (
-    ROOT / "src" / "python",
-    ROOT / "D. Code" / "D.1. Paper 1 - OOSC Cohort Model (4.1.4)" / "Python",
-)
-for source_dir in SOURCE_DIRS:
-    if (source_dir / "oosc_model_numpyro.py").is_file():
-        sys.path.insert(0, str(source_dir))
-        break
-else:
-    raise ImportError("Could not find the model's Python source directory.")
-
 from numpyro.infer.util import log_density
 
 from oosc_model_numpyro import ModelData, model

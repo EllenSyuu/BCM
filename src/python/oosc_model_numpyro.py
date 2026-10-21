@@ -1,11 +1,10 @@
-"""NumPyro port of the sibling Stan/oosc_cohort_model.stan
+"""NumPyro port of src/stan/oosc_cohort_model.stan
 -- the out-of-school cohort model.
 
 Chosen over CmdStan/cmdstanpy specifically to avoid needing a system C++
 compiler (RTools on Windows): JAX/NumPyro JIT-compiles via XLA and needs no
-separate toolchain install. See docs/model-notes.md section 8
-for the
-Stan <-> NumPyro correspondence and a note on where the translation required
+separate toolchain install. See docs/model-notes.md ("NumPyro and Stan") for
+the Stan <-> NumPyro correspondence and a note on where the translation required
 care (the `alpha` 2D smoothing terms, Eq. 11-13, are Stan `target +=` penalty
 statements on a free parameter matrix, not a generative sampling chain --
 ported here via `dist.ImproperUniform` + `numpyro.factor`, NumPyro's standard
@@ -21,7 +20,6 @@ from datetime import datetime
 import io
 import json
 import os
-import hashlib
 from pathlib import Path
 import pickle
 import tempfile
@@ -347,8 +345,9 @@ def run_mcmc_checkpointed(
     # repeated XLA compilation.  checkpoint_every=0 keeps the statistical
     # specification identical while compiling/executing the sampler once.
     if checkpoint_every == 0:
-        from numpyro.infer import MCMC, NUTS
-
+        # MCMC and NUTS come from the module-level import. A local import here
+        # would make both names local to the whole function and break the
+        # checkpointed path below with UnboundLocalError.
         if progress_path is not None:
             progress_path.parent.mkdir(parents=True, exist_ok=True)
             progress_path.write_text(
