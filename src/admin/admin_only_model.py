@@ -10,6 +10,8 @@ regional variance parameters.
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import warnings
 from pathlib import Path
 
@@ -20,11 +22,12 @@ from scipy.stats import norm
 import sys
 
 HERE = Path(__file__).resolve().parent
-PYTHON_DIR = HERE.parent / "Python"
+PYTHON_DIR = HERE.parent / "python"
 sys.path.insert(0, str(PYTHON_DIR))
 
 from oosc_model_numpyro import ModelData, run_mcmc  # noqa: E402
 from spline_basis import build_model_bases, ey_index, mu_anchor_index  # noqa: E402
+from bcm_paths import processed_dir  # noqa: E402
 
 
 def load_admin_input(path: Path, entry_age: int = 6) -> ModelData:
@@ -55,7 +58,10 @@ def load_admin_input(path: Path, entry_age: int = 6) -> ModelData:
         min_year=min(min_year, 2000), max_year=max(max_year, 2022), max_age=a_max
     )
     anchor_idx = mu_anchor_index(bases.ey_grid)
-    ey_idx = ey_index(df["year"].to_numpy(), df["age"].to_numpy(), bases.ey_grid) - 1
+    # ey_index expects the 1-indexed RELATIVE age (1 = entry age), the same
+    # convention as assemble_model_input.py; passing the calendar age would shift
+    # every observation to the wrong entry cohort.
+    ey_idx = ey_index(df["year"].to_numpy(), df["age_index"].to_numpy() + 1, bases.ey_grid) - 1
 
     # Empty survey arrays are intentional. N_SERIES/N_WAVE are one-element
     # placeholders because the shared model still declares survey parameters.
@@ -78,7 +84,7 @@ def load_admin_input(path: Path, entry_age: int = 6) -> ModelData:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--input", type=Path, default=Path("A. Data/A.2. Processed/paper1_total_model_input_candidate.csv"))
+    ap.add_argument("--input", type=Path, default=processed_dir() / "paper1_total_model_input_candidate.csv")
     ap.add_argument("--warmup", type=int, default=200)
     ap.add_argument("--samples", type=int, default=200)
     ap.add_argument("--chains", type=int, default=1)
@@ -88,13 +94,16 @@ def main() -> None:
     print(f"ADMIN-ONLY FIT: countries={data.C}, regions={data.R}, observations={len(data.A_obs)}")
     print("SURVEY OBSERVATIONS: 0 (intentional; DHS/IPUMS/MICS not included)")
     mcmc = run_mcmc(data, num_warmup=args.warmup, num_samples=args.samples, num_chains=args.chains, seed=args.seed)
-    mcmc.print_summary(exclude_deterministic=False)
-    out = Path("A. Data/A.2. Processed/admin_only_mcmc_summary.txt")
+    summary_buffer = io.StringIO()
+    with contextlib.redirect_stdout(summary_buffer):
+        mcmc.print_summary(exclude_deterministic=False)
+    print(summary_buffer.getvalue())
+    out = processed_dir() / "admin_only_mcmc_summary.txt"
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", encoding="utf-8") as f:
         f.write("Paper 1 administrative-only preliminary fit\n")
         f.write(f"countries={data.C}, regions={data.R}, admin_observations={len(data.A_obs)}, survey_observations=0\n")
-        f.write(str(mcmc.print_summary(exclude_deterministic=False)) + "\n")
+        f.write(summary_buffer.getvalue() + "\n")
     print(f"Saved summary: {out}")
 
 
