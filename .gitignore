@@ -1,0 +1,70 @@
+# Local environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Editors, assistants and operating-system files
+.vs/
+.vscode/
+.idea/
+.claude/
+*.user
+*.suo
+*.lnk
+desktop.ini
+.DS_Store
+Thumbs.db
+
+# Local data directories (restricted, licensed or locally downloaded inputs)
+A. Data/
+data/
+restricted/
+private/
+**/internal/
+
+# Data, database and archive formats are never committed
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.zip
+*.gz
+*.rda
+*.rds
+*.RData
+*.parquet
+*.feather
+*.sav
+*.dta
+*.sqlite
+*.db
+*.sql
+*.npz
+*.npy
+
+# Working documents and binary reports
+*.pdf
+*.docx
+*.pptx
+*.html
+
+# Model outputs, logs and checkpoints
+*.log
+*.json
+*.nc
+*.h5
+*.hdf5
+*.pkl
+output/
+outputs/
+results/
+figures/
+checkpoints/
+
+# Reference papers are not mirrored here
+docs/reference-papers/

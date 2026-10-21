@@ -1,0 +1,20 @@
+numpy
+scipy
+pandas
+requests
+eurostat
+pyreadstat
+jax
+numpyro
+
+# UIS public API client -- used to pull ROFST.MOD.* (official published estimates,
+# for later validation) and ISCED-level enrolment/population headcounts. NOT a source
+# of single-age data; the model's administrative input is a restricted local input
+# (see docs/data-sources.md).
+unesco-reader
+
+# cmdstanpy is kept for reference / cross-checking against stan/oosc_cohort_model.stan
+# on a machine that already has a C++ toolchain (e.g. Linux/Mac, or cloud compute).
+# It is NOT required to run the model -- python/oosc_model_numpyro.py is the actual
+# runnable implementation on Windows without RTools. See docs/model_notes.md section 8.
+cmdstanpy

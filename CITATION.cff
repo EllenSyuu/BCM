@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+title: "Bayesian Cohort Model Reproduction: SDG 4.1.4 Out-of-School Rates"
+message: "If you use this repository, please cite it and the underlying published methodology."
+type: software
+authors:
+  - family-names: Syuu
+    given-names: Ellen
+repository-code: "https://github.com/EllenSyuu/BCM"
+license: MIT
+keywords:
+  - Bayesian modelling
+  - NumPyro
+  - JAX
+  - Stan
+  - SDG 4.1.4
+  - reproducible research
+references:
+  # TODO: verify citation. The source header of src/stan/oosc_cohort_model.stan cites
+  # a 2022 UIS/GEMR version titled "A Bayesian Cohort Model for Estimating SDG
+  # Indicator 4.1.4: Out-of-School Rates". Confirm which version the section and
+  # equation numbers in the code refer to.
+  - type: article
+    title: "A Bayesian cohort model for estimating out-of-school rates and populations"
+    authors:
+      - family-names: Dharamshi
+        given-names: Ameer
+      - family-names: Antoninis
+        given-names: Manos
+      - family-names: Montoya
+        given-names: Silvia
+      - family-names: Barakat
+        given-names: Bilal Fouad
+    year: 2023
+    journal: "SocArXiv"
+    doi: "10.31235/osf.io/sqwb2"
