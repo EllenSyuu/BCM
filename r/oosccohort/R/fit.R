@@ -16,6 +16,14 @@ oosc_stan_model <- function(cache_dir = getOption("oosccohort.cache_dir", tools:
   path <- if (!is.null(cache_dir)) file.path(cache_dir, paste0(key, ".rds"))
   model <- if (!is.null(path) && file.exists(path)) readRDS(path) else NULL
   if (is.null(model)) {
+    # rstan compiles the model at run time and needs these header packages; binary
+    # installs of rstan do not always bring them, so they are package dependencies.
+    headers <- c("BH", "RcppEigen", "RcppParallel", "StanHeaders")
+    missing <- headers[!vapply(headers, function(p) nzchar(system.file("include", package = p)), logical(1))]
+    if (length(missing)) {
+      stop("Compiling the Stan model needs the C++ headers of: ", paste(missing, collapse = ", "),
+           ". Install them with install.packages(c(", paste0('"', missing, '"', collapse = ", "), ")).", call. = FALSE)
+    }
     message("Compiling the Stan model (first use only; this takes a few minutes)...")
     model <- rstan::stan_model(file = file, model_name = "oosc_cohort_model")
     if (!is.null(path)) {

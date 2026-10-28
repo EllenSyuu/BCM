@@ -23,7 +23,11 @@ Encoding: UTF-8
 Depends:
     R (>= 4.1)
 Imports:
+    BH,
+    RcppEigen,
+    RcppParallel,
     rstan (>= 2.26),
+    StanHeaders (>= 2.26),
     splines,
     stats,
     tools,
