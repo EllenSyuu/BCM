@@ -37,7 +37,7 @@ The variance convention is consistent: the paper writes N(mean, variance) throug
 
 | # | Paper | Code | Verdict |
 |---|---|---|---|
-| S1 | NUTS, Stan 2.21.5 via R 4.0.2 | NUTS in NumPyro/JAX; equation-level Stan file kept as a reference | differs (implementation only; same algorithm and target) |
+| S1 | NUTS, Stan 2.21.5 via R (rstan) 4.0.2 | R package `oosccohort`: rstan (Stan 2.32 tested). Python pipeline: NumPyro/JAX. The two implementations have matching log densities (parity test) | match (Stan via rstan; newer Stan version) |
 | S2 | 4 chains, 2,000 burn-in and 2,000 sampling iterations per chain | `run_full_model.py` defaults: `--chains 4 --warmup 2000 --samples 2000` | match |
 | S3 | Thinned to 1,000 draws per population | `--thinning 8`: 4 × 2,000 / 8 = 1,000 | match |
 | S4 | Separate fits for male, female and total populations | `assemble_model_input.py --sex M/F/MF` | match |

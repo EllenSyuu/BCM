@@ -25,7 +25,7 @@ flowchart TB
 4. **Cohort variation Theta.** A surface of age-by-cohort changes with smoothing penalties in both directions; the entry age carries no change.
 5. **Latent rate kappa.** The probit-scale out-of-school rate is mu plus Theta.
 6. **Likelihoods.** Administrative rates are compared in real space (the normal CDF of kappa, with administrative and regional noise); survey rates in probit space (kappa plus a country-by-series bias, with sampling and wave noise).
-7. **Inference.** NUTS in NumPyro (`oosc_model_numpyro.py`); `oosc_cohort_model.stan` is an equation-level reference with the same structure.
+7. **Inference.** NUTS in Stan through the R package (`r/oosccohort`, model in `inst/stan/oosc_cohort_model.stan`) or in NumPyro (`oosc_model_numpyro.py`). The two implementations are tested to define the same log density.
 8. **Outputs.** `run_full_model.py` reports the posterior median and 90% interval for every country × year × relative age, plus diagnostics and variance components.
 9. **Planned.** Aggregation from single ages to education levels, out-of-school populations, and regional and global totals.
 

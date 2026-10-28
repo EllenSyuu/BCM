@@ -25,7 +25,8 @@ No reproduced number has been compared with the published results yet. "Verified
 | Spline bases and entry-year indexing | **verified** (unit level) | `tests/test_public_synthetic.py` |
 | NumPyro model has a finite joint density on synthetic inputs | **verified** (unit level) | `tests/test_public_synthetic.py` |
 | Administrative-only loader maps observations to the right entry cohort | **verified** (unit level) | `tests/test_admin_only.py` |
-| Stan reference model | implemented, unverified | No automated comparison with the NumPyro model |
+| Stan model (R package `oosccohort`) | **verified** against the NumPyro model | `r/oosccohort/tests/testthat/test-parity.R`: log-density differences between two fixed parameter points agree to about 1e-10; `tests/test_stan_parity_fixture.py` keeps the fixture in sync with the NumPyro model |
+| R package workflow (validate, prepare, fit, rates, diagnostics) | **verified** on synthetic data | `R CMD check --as-cran` passes in CI; `test-fit.R` checks recovery of a known surface |
 | Public-data acquisition and survey harmonisers (DHS, MICS, IPUMS, WIDE) | implemented, unverified | No tests; real inputs are licensed and not in the repository |
 | Administrative exclusion rules (Appendix A.2.1) | partial | `harmonize_admin_data.py` has an internal self-check but is not called by the pipeline; real-data runs use a private adapter whose rules differ |
 | Hold-out validation, country refits, WIDE reweighting | implemented, unverified | Each module carries its own copy of the country-level model |

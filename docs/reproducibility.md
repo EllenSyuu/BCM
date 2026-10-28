@@ -24,6 +24,18 @@ To change a dependency, edit `pyproject.toml` and regenerate the lock with [uv](
 
 Keep the two header lines at the top of the file, then run the tests on Python 3.11 and 3.13 before committing.
 
+## R package environment
+
+The R package `r/oosccohort` declares its dependencies in `r/oosccohort/DESCRIPTION` (rstan, plus jsonlite and testthat for the tests). CI installs the current CRAN releases and runs `R CMD check --as-cran` with `NOT_CRAN=true`, which compiles the Stan model and runs the parity and fit tests. Locally:
+
+    install.packages(c("rstan", "jsonlite", "testthat"))
+    Sys.setenv(NOT_CRAN = "true")
+    testthat::test_local("r/oosccohort")
+
+Set `OOSC_MODEL_CACHE` to a directory to keep the compiled model between test runs.
+
+The parity fixture `r/oosccohort/tests/testthat/fixtures/numpyro_parity.json` is synthetic and generated from the NumPyro model by `python tests/make_stan_parity_fixture.py`. Regenerate it after any change to the NumPyro model or the spline bases; `tests/test_stan_parity_fixture.py` fails if it is out of date.
+
 ## Public synthetic run
 
     pytest -q

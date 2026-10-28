@@ -3,7 +3,7 @@
 [![CI](https://github.com/EllenSyuu/BCM/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/EllenSyuu/BCM/actions/workflows/ci.yml?query=branch%3Amain)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An independent reproduction, in NumPyro/JAX with an equation-level Stan reference, of a Bayesian cohort model for estimating out-of-school rates for SDG indicator 4.1.4.
+An independent reproduction, as an R package built on Stan and as a Python/NumPyro pipeline, of a Bayesian cohort model for estimating out-of-school rates for SDG indicator 4.1.4.
 
 > **Status: work in progress — not a completed reproduction.** The model, data pipeline and a synthetic end-to-end run are implemented and tested. Agreement with the published results has **not** been verified, and the indicator-level outputs (education-level rates, out-of-school populations, regional and global aggregates) are not implemented yet. See [docs/status.md](docs/status.md) for the evidence behind every status label.
 
@@ -27,6 +27,20 @@ Requires Python 3.11 or newer. Tested in CI on Python 3.11 and 3.13 (Linux, CPU)
     python examples/synthetic_demo/run_demo.py
 
 `requirements.lock` pins the exact versions tested in CI; `pyproject.toml` is the single place where dependencies are declared (see [docs/reproducibility.md](docs/reproducibility.md)).
+
+## R package
+
+[`r/oosccohort`](r/oosccohort) is the R interface for users who fit the model to their own data. It validates the input tables, builds the model input, fits the model with rstan (the paper's software) and reports age-specific rates with credible intervals.
+
+```r
+install.packages("r/oosccohort", repos = NULL, type = "source")   # needs rstan and a C++ toolchain
+library(oosccohort)
+sim <- simulate_oosc(seed = 2022)
+fit <- fit_oosc(prepare_oosc_data(sim$countries, sim$admin, sim$survey))
+head(oosc_rates(fit))
+```
+
+The Stan model and the NumPyro model are two independent implementations of the same specification. A test fixes two parameter points and checks that their log densities agree to about 1e-10, so a change to either implementation that alters the posterior fails CI. `Rscript examples/r/synthetic_demo.R` runs a short synthetic fit (about one minute after compilation). See the [package README](r/oosccohort/README.md).
 
 ## Synthetic demo
 
@@ -87,7 +101,7 @@ flowchart LR
   OBS --> MI["Model input"]
   SIM --> MI
   CI --> SIM
-  MI --> INF["NumPyro NUTS inference<br/>(Stan reference model)"]
+  MI --> INF["NUTS inference<br/>Stan (R package) and NumPyro"]
   INF --> POST["Posterior summaries<br/>and diagnostics"]
   POST --> REP["Reporting and figures"]
   POST -.-> AGG["Education-level and<br/>regional aggregation"]
@@ -150,8 +164,9 @@ Pipeline order for an authorised local run (see [docs/architecture.md](docs/arch
 
     src/python/              Pipeline modules and command-line entry points (NumPyro model, harmonisers, runner)
     src/admin/               Administrative-only preliminary fit (smoke test, not the reproduction)
-    src/stan/                Equation-level Stan reference model
-    examples/synthetic_demo/ Synthetic end-to-end demonstration
+    r/oosccohort/            R package; its inst/stan/ holds the Stan model
+    examples/synthetic_demo/ Synthetic end-to-end demonstration (Python)
+    examples/r/              Synthetic demonstration of the R package
     tests/                   Automated tests (synthetic inputs only)
     docs/                    Status, architecture, model notes, data sources, performance, reproducibility
 
