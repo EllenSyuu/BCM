@@ -1,0 +1,35 @@
+Package: oosccohort
+Type: Package
+Title: Bayesian Cohort Model for Out-of-School Rates
+Version: 0.1.0
+Authors@R:
+    person("Ziyi", "Zhou", email = "204588615+EllenSyuu@users.noreply.github.com",
+           role = c("aut", "cre"))
+Description: An independent implementation, written from the published
+    methodology, of the Bayesian cohort model for out-of-school rates
+    (SDG indicator 4.1.4) described by Dharamshi, Barakat, Antoninis and
+    Montoya (2022). Administrative rates are modelled in real space and
+    survey rates in probit space; a smoothed random walk with drift gives the
+    entry-age baseline and a two-dimensional P-spline surface gives the
+    changes along each school-entry cohort. The package validates input data
+    against a documented contract, builds the model input, fits the model
+    with 'rstan' and reports age-specific rates with credible intervals. It
+    is not an official UNESCO product and does not produce official
+    estimates.
+License: MIT + file LICENSE
+URL: https://github.com/EllenSyuu/BCM
+BugReports: https://github.com/EllenSyuu/BCM/issues
+Encoding: UTF-8
+Depends:
+    R (>= 4.1)
+Imports:
+    rstan (>= 2.26),
+    splines,
+    stats,
+    tools,
+    utils
+Suggests:
+    jsonlite,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+RoxygenNote: 7.3.1

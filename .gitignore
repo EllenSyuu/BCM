@@ -71,5 +71,14 @@ results/
 figures/
 checkpoints/
 
+# R package build and check artefacts
+*.Rcheck/
+.Rproj.user/
+.Rhistory
+*.tar.gz
+
+# Synthetic test fixtures are the only JSON files allowed in Git
+!r/oosccohort/tests/testthat/fixtures/*.json
+
 # Reference papers are not mirrored here
 docs/reference-papers/
