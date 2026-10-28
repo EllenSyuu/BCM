@@ -91,7 +91,9 @@ transformed parameters {
   eta_w = sigma_sigma * eta_w_z;
   for (c in 1:C) {
     mu_star[c, MU_ANCHOR] = mu_star_2000[c];
-    for (k in 1:(MU_ANCHOR - 1)) {
+    // walk backwards from the anchor: each step needs the coefficient after it
+    for (j in 1:(MU_ANCHOR - 1)) {
+      int k = MU_ANCHOR - j;
       mu_star[c, k] = mu_star[c, k + 1] - gamma[c] - mu_eps[c, k];
     }
     for (k in (MU_ANCHOR + 1):N_K1) {
