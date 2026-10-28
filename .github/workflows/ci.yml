@@ -54,3 +54,11 @@ jobs:
           working-directory: r/oosccohort
           args: 'c("--no-manual", "--as-cran")'
           error-on: '"error"'
+      - name: Surface R CMD check logs as annotations on failure
+        if: failure()
+        working-directory: r/oosccohort
+        run: |
+          for f in $(find check -name '00check.log' -o -name '*.Rout.fail' -o -name '00install.out' 2>/dev/null); do
+            body=$(tail -n 80 "$f" | sed 's/%/%25/g; s/\r//g' | sed ':a;N;$!ba;s/\n/%0A/g' | cut -c1-60000)
+            echo "::error title=$(basename "$f")::${body}"
+          done
