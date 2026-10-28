@@ -1,7 +1,7 @@
 """Spline basis construction for the out-of-school cohort model.
 
 Builds the B1 (mu, annual knots) and B5 (alpha/Theta, 5-year knots) basis
-matrices referenced in src/stan/oosc_cohort_model.stan and documented in
+matrices referenced in r/oosccohort/inst/stan/oosc_cohort_model.stan and documented in
 docs/model-notes.md ("Spline conventions").
 
 Choices made here (cubic B-spline, knot spacing, boundary handling) are not

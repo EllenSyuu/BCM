@@ -1,4 +1,4 @@
-"""NumPyro port of src/stan/oosc_cohort_model.stan
+"""NumPyro port of r/oosccohort/inst/stan/oosc_cohort_model.stan
 -- the out-of-school cohort model.
 
 Chosen over CmdStan/cmdstanpy specifically to avoid needing a system C++
