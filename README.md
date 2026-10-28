@@ -9,7 +9,7 @@ An independent reproduction, in NumPyro/JAX with an equation-level Stan referenc
 
 > **Scope boundary:** This is not the official UNESCO, UIS, or GEM Report model and it does not publish official estimates.
 
-**Reproduced work:** Dharamshi, A., Antoninis, M., Montoya, S. & Barakat, B. F. (2023). *A Bayesian cohort model for estimating out-of-school rates and populations.* SocArXiv. https://doi.org/10.31235/osf.io/sqwb2 [TODO: verify citation — the Stan source header cites a 2022 UIS/GEMR version with a different title; confirm which version the code's section and equation numbers follow.]
+**Reproduced work:** Dharamshi, A., Barakat, B., Antoninis, M. & Montoya, S. (2022). *A Bayesian Cohort Model for Estimating SDG Indicator 4.1.4: Out-of-School Rates.* UNESCO Institute for Statistics and Global Education Monitoring Report, TCG 9 document WG/HHS/2. The code's section and equation numbers follow this version; a later version is on SocArXiv (https://doi.org/10.31235/osf.io/sqwb2). The code has been checked against the paper equation by equation: see [docs/paper-audit.md](docs/paper-audit.md).
 
 **Data boundary:** Restricted inputs are stored locally or in a separate private environment and are never committed to this repository. Everything here runs on synthetic data.
 

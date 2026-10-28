@@ -14,11 +14,27 @@ keywords:
   - Stan
   - SDG 4.1.4
   - reproducible research
+preferred-citation:
+  # The version whose section, equation, table and figure numbers the code follows
+  # (checked in docs/paper-audit.md).
+  type: report
+  title: "A Bayesian Cohort Model for Estimating SDG Indicator 4.1.4: Out-of-School Rates. A proposal by the UNESCO Institute for Statistics and the Global Education Monitoring Report"
+  authors:
+    - family-names: Dharamshi
+      given-names: Ameer
+    - family-names: Barakat
+      given-names: Bilal
+    - family-names: Antoninis
+      given-names: Manos
+    - family-names: Montoya
+      given-names: Silvia
+  institution:
+    name: "UNESCO Institute for Statistics, Technical Cooperation Group on the Indicators for SDG 4"
+  number: "WG/HHS/2"
+  date-published: "2022-11-22"
+  year: 2022
 references:
-  # TODO: verify citation. The source header of src/stan/oosc_cohort_model.stan cites
-  # a 2022 UIS/GEMR version titled "A Bayesian Cohort Model for Estimating SDG
-  # Indicator 4.1.4: Out-of-School Rates". Confirm which version the section and
-  # equation numbers in the code refer to.
+  # Later preprint version of the same methodology (not audited against the code).
   - type: article
     title: "A Bayesian cohort model for estimating out-of-school rates and populations"
     authors:
